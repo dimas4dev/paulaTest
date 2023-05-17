@@ -94,6 +94,15 @@ function recolectarInfoIntento() {
  };
 }
 
+/** procesa el objeto respuesta recibido del servidor y lo organiza segun el puntaje obtenido
+ *
+ * @param {object}a: Objeto proviente del servidor que contiene puntajes
+ * @param {object}b: Objeto proviente del servidor que contiene puntajes
+ */
+function compararPorPropiedad(a, b) {
+ return a.puntaje - b.puntaje;
+}
+
 /** procesa el objeto respuesta recibido del servidor y actualiza el DOM
  *
  * @param {object}respuesta: Objeto proviente del servidor que contiene puntajes
@@ -101,6 +110,7 @@ function recolectarInfoIntento() {
 function procesarRespuesta(respuesta) {
  let containerPuntaje = document.getElementById("puntaje");
  let miPuntaje = respuesta.puntaje;
+ respuesta.tablero.sort(compararPorPropiedad);
 
  containerPuntaje.innerText = miPuntaje;
 
@@ -110,12 +120,13 @@ function procesarRespuesta(respuesta) {
   containerTablero.removeChild(containerTablero.firstChild);
  }
 
+ let contadorPuntaje = 1;
  for (let index = 0; index < respuesta.tablero.length; index++) {
   let listElement = document.createElement("li");
   let spanElement = document.createElement("span");
 
-  spanElement.innerText = `Puntaje ${index} ${item.nombre} : ${item.puntaje}`;
-
+  spanElement.innerText = `Pocision ${contadorPuntaje} ${respuesta.tablero[index].nombre} : ${respuesta.tablero[index].puntaje}`;
+  contadorPuntaje++;
   listElement.appendChild(spanElement);
   containerTablero.appendChild(listElement);
  }
@@ -126,6 +137,7 @@ function procesarRespuesta(respuesta) {
  */
 function enviarIntento() {
  let url = "https://api-server.davpaez.repl.co/tarea3/intento";
+ let infoIntento = recolectarInfoIntento();
 
  enviarPeticionPOST(url, infoIntento).then(procesarRespuesta);
 
@@ -134,24 +146,17 @@ function enviarIntento() {
 
 /** Reaccionar a pulsación de una tecla (evento keydown)
  *
- * Parámetros:
- * - indice (numero): Valor entre 0 y 3 que representa el recuadro al cual queremos cambiarle el color
+ * @param {number} indice: Valor entre 0 y 3 que representa el recuadro al cual queremos cambiarle el color
  */
 function reaccionarAnteTecla() {
- // Obtener valor de tecla pulsada y convertirlo a letra mayúscula
  let tecla = event.key.toUpperCase();
 
- // Disparar funcion empezarJuego si la tecla oprimida fue E
  if (tecla == "E") {
   console.log("Tecla oprimida: " + tecla);
 
-  // Empezar juego
-  // POR-HACER en Etapa 1
   empezarJuego();
  }
 
- // Disparar funcion cambiarColorRecuadro si la tecla oprimida fue {A,S,D,F}
- // La función recibe un índice dependiendo de la letra oprimida
  if (tecla == "A") {
   console.log("Tecla oprimida: " + tecla);
   cambiarColorRecuadro(0);
@@ -166,17 +171,10 @@ function reaccionarAnteTecla() {
   cambiarColorRecuadro(3);
  }
 
- // Disparar función enviarIntento si la tecla oprimida fue ESPACIO
  if (tecla == " ") {
   console.log("Tecla oprimida: " + tecla);
-
-  // Enviar intento a servidor remoto
-  // POR-HACER en Etapa 2
   enviarIntento();
  }
 }
 
-// Añadir event listener al elemento window para reaccionar a
-// la pulsación de cualquier tecla
-// POR-HACER en Etapa 0
 window.addEventListener("keydown", reaccionarAnteTecla);
