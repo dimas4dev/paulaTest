@@ -7,7 +7,7 @@ let recuadros = document.querySelectorAll(".recuadro");
 let elem_puntaje = document.getElementById("puntaje");
 let elem_tablero = document.getElementById("tablero");
 
-let nombre_usuario = "Grupo Juli y Pau";
+let nombre_usuario;
 let matices = [];
 
 let tiempo_inicial;
@@ -153,7 +153,9 @@ function reaccionarAnteTecla() {
 
  if (tecla == "E") {
   console.log("Tecla oprimida: " + tecla);
-
+  nombre_usuario = prompt(
+   "Hola, Indicame como te llamas para iniciar el juego: "
+  );
   empezarJuego();
  }
 
